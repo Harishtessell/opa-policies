@@ -2,5 +2,5 @@ package embed
 
 import "embed"
 
-//go:embed *.rego data.json
+//go:embed policies/*.rego policies/data.json
 var FS embed.FS
