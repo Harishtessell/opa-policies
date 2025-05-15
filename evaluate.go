@@ -2,27 +2,30 @@ package opa
 
 import (
 	"context"
+	"embed"
 	"encoding/json"
 	"fmt"
 	"io/fs"
 	"path/filepath"
 
-	policies "github.com/Harishtessell/opa-policies/policies"
 	"github.com/open-policy-agent/opa/v1/rego"
 	"github.com/open-policy-agent/opa/v1/storage/inmem"
 )
+
+//go:embed policies/*.rego policies/data.json
+var policyFS embed.FS
 
 func Evaluate(ctx context.Context, query string, input map[string]interface{}) (interface{}, error) {
 	var regoOptions []func(*rego.Rego)
 	regoOptions = append(regoOptions, rego.Query(query))
 
 	// Step 1: Embed and load all .rego files
-	err := fs.WalkDir(policies.FS, "policies", func(path string, d fs.DirEntry, err error) error {
+	err := fs.WalkDir(policyFS, "policies", func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
 		if !d.IsDir() && filepath.Ext(path) == ".rego" {
-			content, err := policies.FS.ReadFile(path)
+			content, err := policyFS.ReadFile(path)
 			if err != nil {
 				return fmt.Errorf("failed to read %s: %w", path, err)
 			}
@@ -35,7 +38,7 @@ func Evaluate(ctx context.Context, query string, input map[string]interface{}) (
 	}
 
 	// Step 2: Load data.json into in-memory store
-	dataBytes, err := policies.FS.ReadFile("policies/data.json")
+	dataBytes, err := policyFS.ReadFile("policies/data.json")
 	if err != nil {
 		return nil, fmt.Errorf("failed to read data.json: %w", err)
 	}
