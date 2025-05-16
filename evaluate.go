@@ -2,7 +2,6 @@ package opa
 
 import (
 	"context"
-	"embed"
 	"encoding/json"
 	"fmt"
 	"io/fs"
@@ -11,9 +10,6 @@ import (
 	"github.com/open-policy-agent/opa/v1/rego"
 	"github.com/open-policy-agent/opa/v1/storage/inmem"
 )
-
-//go:embed policies/*.rego policies/data.json
-var policyFS embed.FS
 
 func Evaluate(ctx context.Context, query string, input map[string]interface{}) (interface{}, error) {
 	var regoOptions []func(*rego.Rego)
