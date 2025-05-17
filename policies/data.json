@@ -1,5 +1,8 @@
 {
   "limits": {
     "max": 10000
+  },
+  "constraints_config": {
+    "os_memory_percent": 20
   }
 }
