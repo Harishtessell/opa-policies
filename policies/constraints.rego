@@ -100,8 +100,8 @@ deny contains msg if {
 	transactions > ((1.1 * sessions) + 50) * 2
 	msg := sprintf("transactions must be <= %v ((1.1 * sessions + 50) * 2)", [((1.1 * sessions) + 50) * 2])
 }
-default  valid := false
-valid if count(deny) == 0
+default  valid := 0
+valid:= count(deny)
 
 result := {
   "valid": valid,
