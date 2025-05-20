@@ -1,0 +1,11 @@
+{
+		"compute_memory":             1000.0,
+		"db_total_allotted_memory":   200.0,
+		"sga_max_size":               600.0,
+		"pga_aggregate_limit":        50.0,
+		"pga_aggregate_target":       40.0,
+		"sga_target":                 100.0,
+		"processes":                  250.0,
+		"sessions":                   400.0,
+		"transactions":               500.0
+	}
