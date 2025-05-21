@@ -54,7 +54,7 @@ deny contains msg if {
 
 deny contains msg if {
 	pga_aggregate_target > pga_aggregate_limit / 2
-	msg := sprintf("pga_aggregate_target must be <= %v %v", [pga_aggregate_limit / 2, os_memory_percent])
+	msg := sprintf("pga_aggregate_target must be <= %v %v", [pga_aggregate_limit / 2, db_available_memory * 0.7])
 }
 
 # sga_target constraints
