@@ -24,6 +24,48 @@ processes := input.processes
 sessions := input.sessions
 transactions := input.transactions
 
+deny contains msg if {
+	sga_max_size > 0
+	msg := sprintf("sga_max_size must be >= 1 GB <= %v (70%% of db_available_memory)", [db_available_memory * 0.7])
+}
+
+deny contains msg if {
+	sga_max_size > 0
+	msg := sprintf("pga_aggregate_limit must be >=%v (max of 40%% * sga_max_size, 3)", [max([sga_max_size * 0.4, 3])])
+}
+
+deny contains msg if {
+	sga_max_size > 0
+	msg := sprintf("sga_max_size + pga_aggregate_limit must be <= %v (db_available_memory)", [db_available_memory])
+}
+
+deny contains msg if {
+	sga_max_size > 0
+	msg := sprintf("pga_aggregate_target must be >=1.5 GB <= %v (pga_aggregate_limit/2)", [pga_aggregate_limit / 2])
+}
+
+deny contains msg if {
+	sga_max_size > 0
+	msg := sprintf("sga_target must be >= 1GB <= %v (sga_max_size)", [sga_max_size])
+}
+
+deny contains msg if {
+	sga_max_size > 0
+	msg := sprintf("processes must be >=300 <=%v  (pga_aggregate_limit*1024 / 3)", [pga_aggregate_limit * 1024 / 3])
+}
+
+deny contains msg if {
+	sga_max_size > 0
+	msg := sprintf("sessions must be >= %v ((1.5 * p) + 50) <= %v ((1.5 * p + 50) * 2)", [((1.5 * processes) + 50),((1.5 * processes) + 50) * 2])
+
+}
+
+deny contains msg if {
+	sga_max_size > 0
+	msg := sprintf("transactions must be >= %v (1.1 * sessions + 50) <= %v ((1.1 * sessions + 50) * 2)", [((1.1 * sessions) + 50),((1.1 * sessions) + 50) * 2])
+
+}
+
 # sga_max_size constraints
 deny contains msg if {
 	sga_max_size < 1
@@ -75,8 +117,8 @@ deny contains msg if {
 }
 
 deny contains msg if {
-	processes > pga_aggregate_limit / 3
-	msg := sprintf("processes must be <=%v  (pga_aggregate_limit / 3)", [pga_aggregate_limit / 3])
+	processes > pga_aggregate_limit * 1024 / 3
+	msg := sprintf("processes must be <=%v  (pga_aggregate_limit / 3)", [pga_aggregate_limit * 1024 / 3])
 }
 
 # sessions constraints
