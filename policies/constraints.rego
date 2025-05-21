@@ -4,11 +4,10 @@ compute_memory := input.compute_memory
 os_memory_percent := data.constraints_config.os_memory_percent
 
 # Use override if set, else fallback to configured percentage
-actual_os_memory := (compute_memory * os_memory_percent) / 100 
-
 actual_os_memory := input.os_memory_default_override if {
 	is_number(input.os_memory_default_override)
-}
+ } else := (compute_memory * os_memory_percent) / 100 
+
 
 available_compute_memory := compute_memory - actual_os_memory
 db_total_allotted_memory := input.db_total_allotted_memory
