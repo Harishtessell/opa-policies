@@ -24,9 +24,45 @@ processes := input.processes
 sessions := input.sessions
 transactions := input.transactions
 
+# SMS constraints
+sms_min := 1
+sms_max := db_available_memory * 0.7
+sms_log := sprintf("sms must be >= %.2f and <= %.2f", [sms_min, sms_max])
+alog := sprintf("sga_max_size + pga_aggregate_limit must be <= %v (db_available_memory)", [db_available_memory])
+# PAL constraints
+pal_min := max([sga_max_size * 0.4, 3])
+pal_max := db_available_memory - sga_max_size
+pal_log := sprintf("pal must be >= %.2f and <= %.2f (to keep sms + pal <= dbam)", [pal_min, pal_max])
+
+# PAT constraints
+pat_min := 1.5
+pat_max := pga_aggregate_limit / 2
+pat_log := sprintf("pat must be >= %.2f and <= %.2f", [pat_min, pat_max])
+
+# ST constraints
+st_min := 1
+st_log := sprintf("st must be >= %.2f and <= %.2f", [st_min, sga_max_size])
+
+# P constraints
+p_min := 300
+p_max := pga_aggregate_limit * 1024 / 3
+p_log := sprintf("p must be >= %.2f and <= %.2f", [p_min, p_max])
+
+# S constraints
+s_min := 1.5 * processes + 50
+s_max := s_min * 2
+s_log := sprintf("s must be >= %.2f and <= %.2f", [s_min, s_max])
+
+# T constraints
+t_min := 1.1 * sessions + 50
+t_max := t_min * 2
+t_log := sprintf("t must be >= %.2f and <= %.2f", [t_min, t_max])
+
+log:=true
+
 deny contains msg if {
-	sga_max_size > 0
-	msg := sprintf(" checking logs ::: \n -- sga_max_size must be >= 1 GB <= %v \n -- pga_aggregate_limit must be >=%v \n -- sga_max_size + pga_aggregate_limit must be <= %v \n -- pga_aggregate_target must be >=1.5 GB <= %v \n -- sga_target must be >= 1GB <= %v \n -- processes must be >=300 <=%v \n -- sessions must be >= %v <= %v\n -- transactions must be >= %v (1.1 * sessions + 50) <= %v ((1.1 * sessions + 50) * 2) ", [db_available_memory * 0.7,max([sga_max_size * 0.4, 3]),db_available_memory,pga_aggregate_limit / 2,sga_max_size,pga_aggregate_limit * 1024 / 3,((1.5 * processes) + 50),((1.5 * processes) + 50) * 2,((1.1 * sessions) + 50),((1.1 * sessions) + 50) * 2])
+	log
+	msg:=concat("\n",[sms_log,alog,pal_log,pat_log,st_log,p_log,s_log,t_log])
 }
 
 # sga_max_size constraints
