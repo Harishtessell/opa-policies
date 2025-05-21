@@ -58,89 +58,90 @@ t_min := 1.1 * sessions + 50
 t_max := t_min * 2
 t_log := sprintf("t must be >= %.2f and <= %.2f", [t_min, t_max])
 
-log:=true
+# log:=true
 
-deny contains msg if {
-	log
-	msg:=concat("\n",[sms_log,alog,pal_log,pat_log,st_log,p_log,s_log,t_log])
-}
+deny := [sms_log,alog,pal_log,pat_log,st_log,p_log,s_log,t_log]
+# deny contains msg if {
+# 	log
+# 	msg:=concat("\n",[sms_log,alog,pal_log,pat_log,st_log,p_log,s_log,t_log])
+# }
 
-# sga_max_size constraints
-deny contains msg if {
-	sga_max_size < 1
-	msg := "sga_max_size must be >= 1 GB"
-}
+# # sga_max_size constraints
+# deny contains msg if {
+# 	sga_max_size < 1
+# 	msg := "sga_max_size must be >= 1 GB"
+# }
 
-deny contains msg if {
-	sga_max_size > db_available_memory * 0.7
-	msg := sprintf("sga_max_size must be <= %v (70%% of db_available_memory)", [db_available_memory * 0.7])
-}
+# deny contains msg if {
+# 	sga_max_size > db_available_memory * 0.7
+# 	msg := sprintf("sga_max_size must be <= %v (70%% of db_available_memory)", [db_available_memory * 0.7])
+# }
 
-# pga_aggregate_limit constraints
-deny contains msg if {
-	pga_aggregate_limit < max([sga_max_size * 0.4, 3])
-	msg := sprintf("pga_aggregate_limit must be >= %v (max of 40%% * sga_max_size, 3)", [max([sga_max_size * 0.4, 3])])
-}
+# # pga_aggregate_limit constraints
+# deny contains msg if {
+# 	pga_aggregate_limit < max([sga_max_size * 0.4, 3])
+# 	msg := sprintf("pga_aggregate_limit must be >= %v (max of 40%% * sga_max_size, 3)", [max([sga_max_size * 0.4, 3])])
+# }
 
-deny contains msg if {
-	sga_max_size + pga_aggregate_limit > db_available_memory
-	msg := sprintf("sga_max_size + pga_aggregate_limit must be <= %v (db_available_memory)", [db_available_memory])
-}
+# deny contains msg if {
+# 	sga_max_size + pga_aggregate_limit > db_available_memory
+# 	msg := sprintf("sga_max_size + pga_aggregate_limit must be <= %v (db_available_memory)", [db_available_memory])
+# }
 
-# pga_aggregate_target constraints
-deny contains msg if {
-	pga_aggregate_target < 1.5
-	msg := "pga_aggregate_target must be >= 1.5 GB"
-}
+# # pga_aggregate_target constraints
+# deny contains msg if {
+# 	pga_aggregate_target < 1.5
+# 	msg := "pga_aggregate_target must be >= 1.5 GB"
+# }
 
-deny contains msg if {
-	pga_aggregate_target > pga_aggregate_limit / 2
-	msg := sprintf("pga_aggregate_target must be <= %v (pga_aggregate_limit/2)", [pga_aggregate_limit / 2])
-}
+# deny contains msg if {
+# 	pga_aggregate_target > pga_aggregate_limit / 2
+# 	msg := sprintf("pga_aggregate_target must be <= %v (pga_aggregate_limit/2)", [pga_aggregate_limit / 2])
+# }
 
-# sga_target constraints
-deny contains msg if {
-	sga_target < 1
-	msg := "sga_target must be >= 1 GB"
-}
+# # sga_target constraints
+# deny contains msg if {
+# 	sga_target < 1
+# 	msg := "sga_target must be >= 1 GB"
+# }
 
-deny contains msg if {
-	sga_target > sga_max_size
-	msg := sprintf("sga_target must be <= %v (sga_max_size)", [sga_max_size])
-}
+# deny contains msg if {
+# 	sga_target > sga_max_size
+# 	msg := sprintf("sga_target must be <= %v (sga_max_size)", [sga_max_size])
+# }
 
-# processes constraints
-deny contains msg if {
-	processes < 300
-	msg := "processes must be >= 300"
-}
+# # processes constraints
+# deny contains msg if {
+# 	processes < 300
+# 	msg := "processes must be >= 300"
+# }
 
-deny contains msg if {
-	processes > pga_aggregate_limit * 1024 / 3
-	msg := sprintf("processes must be <=%v  (pga_aggregate_limit / 3)", [pga_aggregate_limit * 1024 / 3])
-}
+# deny contains msg if {
+# 	processes > pga_aggregate_limit * 1024 / 3
+# 	msg := sprintf("processes must be <=%v  (pga_aggregate_limit / 3)", [pga_aggregate_limit * 1024 / 3])
+# }
 
-# sessions constraints
-deny contains msg if {
-	sessions < (1.5 * processes) + 50
-	msg := sprintf("sessions must be >= %v (1.5 * processes + 50)", [(1.5 * processes) + 50])
-}
+# # sessions constraints
+# deny contains msg if {
+# 	sessions < (1.5 * processes) + 50
+# 	msg := sprintf("sessions must be >= %v (1.5 * processes + 50)", [(1.5 * processes) + 50])
+# }
 
-deny contains msg if {
-	sessions > ((1.5 * processes) + 50) * 2
-	msg := sprintf("sessions must be <= %v ((1.5 * processes + 50) * 2)", [((1.5 * processes) + 50) * 2])
-}
+# deny contains msg if {
+# 	sessions > ((1.5 * processes) + 50) * 2
+# 	msg := sprintf("sessions must be <= %v ((1.5 * processes + 50) * 2)", [((1.5 * processes) + 50) * 2])
+# }
 
-# transactions constraints
-deny contains msg if {
-	transactions < (1.1 * sessions) + 50
-	msg := sprintf("transactions must be >= %v (1.1 * sessions + 50)", [(1.1 * sessions) + 50])
-}
+# # transactions constraints
+# deny contains msg if {
+# 	transactions < (1.1 * sessions) + 50
+# 	msg := sprintf("transactions must be >= %v (1.1 * sessions + 50)", [(1.1 * sessions) + 50])
+# }
 
-deny contains msg if {
-	transactions > ((1.1 * sessions) + 50) * 2
-	msg := sprintf("transactions must be <= %v ((1.1 * sessions + 50) * 2)", [((1.1 * sessions) + 50) * 2])
-}
+# deny contains msg if {
+# 	transactions > ((1.1 * sessions) + 50) * 2
+# 	msg := sprintf("transactions must be <= %v ((1.1 * sessions + 50) * 2)", [((1.1 * sessions) + 50) * 2])
+# }
 default  valid := false
 valid if count(deny) == 0
 
