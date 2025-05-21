@@ -4,12 +4,10 @@ compute_memory := input.compute_memory
 os_memory_percent := data.constraints_config.os_memory_percent
 
 # Use override if set, else fallback to configured percentage
-actual_os_memory := input.os_memory_default_override if {
-	input.os_memory_default_override != null
-}
+actual_os_memory := (compute_memory * os_memory_percent) / 100 
 
-actual_os_memory := (compute_memory * os_memory_percent) / 100 if {
-	not input.os_memory_default_override
+actual_os_memory := input.os_memory_default_override if {
+	is_number(input.os_memory_default_override)
 }
 
 available_compute_memory := compute_memory - actual_os_memory
@@ -54,7 +52,7 @@ deny contains msg if {
 
 deny contains msg if {
 	pga_aggregate_target > pga_aggregate_limit / 2
-	msg := sprintf("pga_aggregate_target must be <= %v %v", [pga_aggregate_limit / 2, db_available_memory * 0.7])
+	msg := sprintf("pga_aggregate_target must be <= %v (pga_aggregate_limit / 2)", [pga_aggregate_limit / 2])
 }
 
 # sga_target constraints
