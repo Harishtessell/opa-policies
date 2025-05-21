@@ -1,11 +1,11 @@
 {
 		"compute_memory":             64,
-		"db_total_allotted_memory":   10,
-		"sga_max_size":               15.84,
-		"pga_aggregate_limit":        15.36,
+		"db_total_allotted_memory":   0,
+		"sga_max_size":               36,
+		"pga_aggregate_limit":        50.0,
 		"pga_aggregate_target":       40.0,
 		"sga_target":                 100.0,
-		"processes":                  5243,
-		"sessions":                   7914.0,
+		"processes":                  250.0,
+		"sessions":                   400.0,
 		"transactions":               500.0
 	}
