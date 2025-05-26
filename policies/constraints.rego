@@ -1,4 +1,5 @@
 package constraints
+import data.configuration.functions
 
 compute_memory := input.compute_memory
 os_memory_percent := data.constraints_config.os_memory_percent
@@ -14,16 +15,20 @@ db_total_allotted_memory := input.db_total_allotted_memory
 db_available_memory := available_compute_memory - db_total_allotted_memory
 
 sga_max_size := input.sga_max_size
+sga_max_size_lower_bound := convert_gb_to_bytes(1)
 pga_aggregate_limit := input.pga_aggregate_limit
+pga_aggregate_limit_lower_bound := convert_gb_to_bytes(3)
 pga_aggregate_target := input.pga_aggregate_target
+pga_aggregate_target_lower_bound := convert_gb_to_bytes(1.5)
 sga_target := input.sga_target
 processes := input.processes
+processes_upper_bound := convert_mb_to_bytes(3)
 sessions := input.sessions
 transactions := input.transactions
 
 # sga_max_size constraints
 deny contains msg if {
-	sga_max_size < 1
+	sga_max_size < sga_max_size_lower_bound
 	msg := "sga_max_size must be >= 1 GB"
 }
 
@@ -34,8 +39,8 @@ deny contains msg if {
 
 # pga_aggregate_limit constraints
 deny contains msg if {
-	pga_aggregate_limit < max([sga_max_size * 0.4, 3])
-	msg := sprintf("pga_aggregate_limit must be >= %v (max of 40%% * sga_max_size, 3)", [max([sga_max_size * 0.4, 3])])
+	pga_aggregate_limit < max([sga_max_size * 0.4, pga_aggregate_limit_lower_bound])
+	msg := sprintf("pga_aggregate_limit must be >= %v (max of 40%% * sga_max_size, 3Mb)", [max([sga_max_size * 0.4, 3])])
 }
 
 deny contains msg if {
@@ -45,8 +50,8 @@ deny contains msg if {
 
 # pga_aggregate_target constraints
 deny contains msg if {
-	pga_aggregate_target < 1.5
-	msg := "pga_aggregate_target must be >= 1.5 GB"
+	pga_aggregate_target < pga_aggregate_target_lower_bound
+	msg := "pga_aggregate_target must be >= 3Gb"
 }
 
 deny contains msg if {
@@ -56,8 +61,8 @@ deny contains msg if {
 
 # sga_target constraints
 deny contains msg if {
-	sga_target < 1
-	msg := "sga_target must be >= 1 GB"
+	sga_target < sga_max_size_lower_bound
+	msg := "sga_target must be >= 1Gb"
 }
 
 deny contains msg if {
@@ -72,8 +77,8 @@ deny contains msg if {
 }
 
 deny contains msg if {
-	processes > pga_aggregate_limit * 1024 / 3
-	msg := sprintf("processes must be <=%v  (pga_aggregate_limit / 3Mb)", [pga_aggregate_limit * 1024 / 3])
+	processes > pga_aggregate_limit / processes_upper_bound
+	msg := sprintf("processes must be <=%v  (pga_aggregate_limit / 3Mb)", [pga_aggregate_limit / processes_upper_bound])
 }
 
 # sessions constraints
