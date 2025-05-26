@@ -1,6 +1,7 @@
 package constraints
-import data.configuration.functions
 
+gb_to_bytes := 1024*1024*1024
+mb_to_bytes := 1024*1024
 compute_memory := input.compute_memory
 os_memory_percent := data.constraints_config.os_memory_percent
 
@@ -15,14 +16,14 @@ db_total_allotted_memory := input.db_total_allotted_memory
 db_available_memory := available_compute_memory - db_total_allotted_memory
 
 sga_max_size := input.sga_max_size
-sga_max_size_lower_bound := convert_gb_to_bytes(1)
+sga_max_size_lower_bound := 1 * gb_to_bytes
 pga_aggregate_limit := input.pga_aggregate_limit
-pga_aggregate_limit_lower_bound := convert_gb_to_bytes(3)
+pga_aggregate_limit_lower_bound := 3 * gb_to_bytes
 pga_aggregate_target := input.pga_aggregate_target
-pga_aggregate_target_lower_bound := convert_gb_to_bytes(1.5)
+pga_aggregate_target_lower_bound := 1.5 * gb_to_bytes
 sga_target := input.sga_target
 processes := input.processes
-processes_upper_bound := convert_mb_to_bytes(3)
+processes_upper_bound := 3 * mb_to_bytes
 sessions := input.sessions
 transactions := input.transactions
 
