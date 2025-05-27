@@ -12,8 +12,10 @@ actual_os_memory := input.os_memory_default_override if {
 
 
 available_compute_memory := compute_memory - actual_os_memory
-db_total_allotted_memory := input.db_total_allotted_memory
-db_available_memory := available_compute_memory - db_total_allotted_memory
+
+db_available_memory := input.available_memory if {
+	input.existing_server
+ } else := available_compute_memory
 
 sga_max_size := input.sga_max_size
 sga_max_size_lower_bound := 1 * gb_to_bytes
