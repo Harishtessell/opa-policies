@@ -11,7 +11,7 @@ actual_os_memory := input.os_memory_default_override if {
  } else := (compute_memory * os_memory_percent) / 100 
 
 
-available_compute_memory := compute_memory - actual_os_memory
+available_compute_memory := (compute_memory - actual_os_memory) * gb_to_bytes
 
 db_available_memory := input.available_memory if {
 	input.existing_server
