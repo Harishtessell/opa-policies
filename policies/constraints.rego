@@ -17,13 +17,13 @@ db_available_memory := input.available_memory if {
 	input.existing_server
  } else := available_compute_memory
 
-sga_max_size := input.sga_max_size
+sga_max_size := input.sga_max_size * gb_to_bytes
 sga_max_size_lower_bound := 1 * gb_to_bytes
-pga_aggregate_limit := input.pga_aggregate_limit
+pga_aggregate_limit := input.pga_aggregate_limit * gb_to_bytes
 pga_aggregate_limit_lower_bound := 3 * gb_to_bytes
-pga_aggregate_target := input.pga_aggregate_target
+pga_aggregate_target := input.pga_aggregate_target * gb_to_bytes
 pga_aggregate_target_lower_bound := 1.5 * gb_to_bytes
-sga_target := input.sga_target
+sga_target := input.sga_target * gb_to_bytes
 processes := input.processes
 processes_upper_bound := 3 * mb_to_bytes
 sessions := input.sessions

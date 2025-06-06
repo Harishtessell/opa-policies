@@ -17,7 +17,7 @@ type PolicyEngine struct {
 	data    map[string]interface{}
 }
 
-// NewPolicyEngine loads Rego modules and data.json once
+// NewPolicyEngine loads Rego modules and data.json
 func NewPolicyEngine(ctx context.Context) (*PolicyEngine, error) {
 	var modules []func(*rego.Rego)
 
