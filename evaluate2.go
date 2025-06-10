@@ -18,7 +18,7 @@ type PolicyEngine struct {
 }
 
 // NewPolicyEngine loads Rego modules and data.json
-func NewPolicyEngine(ctx context.Context) (*PolicyEngine, error) {
+func NewPolicyEngine() (*PolicyEngine, error) {
 	var modules []func(*rego.Rego)
 
 	// Load all .rego files from embedded FS
