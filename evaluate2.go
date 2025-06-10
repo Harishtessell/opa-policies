@@ -56,30 +56,30 @@ func NewPolicyEngine() (*PolicyEngine, error) {
 	}, nil
 }
 
-func (pe *PolicyEngine) EvaluateQuery(ctx context.Context, query string, input map[string]interface{}) (interface{}, error) {
-	store := inmem.NewFromObject(pe.data)
+func (engine *PolicyEngine) EvaluateQuery(ctx context.Context, query string, input map[string]interface{}) (interface{}, error) {
+	memoryStore := inmem.NewFromObject(engine.data)
 
-	// Create rego options for modules
-	var regoOptions []func(*rego.Rego)
+	// Build Rego options
+	var opaOptions []func(*rego.Rego)
 
-	regoOptions = append(regoOptions, rego.Query(query))
-	regoOptions = append(regoOptions, rego.Input(input))
-	regoOptions = append(regoOptions, rego.Store(store))
+	opaOptions = append(opaOptions, rego.Query(query))
+	opaOptions = append(opaOptions, rego.Input(input))
+	opaOptions = append(opaOptions, rego.Store(memoryStore))
 
-	// Add all preloaded rego.Module(...) options
-	regoOptions = append(regoOptions, pe.modules...)
+	// Include preloaded Rego modules
+	opaOptions = append(opaOptions, engine.modules...)
 
 	// Create and evaluate
-	r := rego.New(regoOptions...)
+	regoEvaluator := rego.New(opaOptions...)
 
-	rs, err := r.Eval(ctx)
+	resultSet, err := regoEvaluator.Eval(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("OPA evaluation error: %w", err)
 	}
 
-	if len(rs) == 0 || len(rs[0].Expressions) == 0 {
+	if len(resultSet) == 0 || len(resultSet[0].Expressions) == 0 {
 		return nil, fmt.Errorf("OPA returned empty result")
 	}
 
-	return rs[0].Expressions[0].Value, nil
+	return resultSet[0].Expressions[0].Value, nil
 }
