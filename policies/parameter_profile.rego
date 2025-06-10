@@ -41,7 +41,7 @@ deny contains msg if {
 
 deny contains msg if {
 	sga_max_size > db_available_memory * 0.7
-	msg := sprintf("sga_max_size must be <= %v GB (70%% of db_available_memory)", [functions.round_to_2_decimals(db_available_memory * 0.7 / gb_to_bytes)])
+	msg := sprintf("sga_max_size must be <= %v GB", [functions.round_to_2_decimals(db_available_memory * 0.7 / gb_to_bytes)])
 }
 
 # pga_aggregate_limit constraints
@@ -52,7 +52,7 @@ deny contains msg if {
 
 deny contains msg if {
 	sga_max_size + pga_aggregate_limit > db_available_memory
-	msg := sprintf("sga_max_size + pga_aggregate_limit must be <= %v GB (db_available_memory)", [functions.round_to_2_decimals(db_available_memory / gb_to_bytes)])
+	msg := sprintf("sga_max_size + pga_aggregate_limit must be <= %v GB", [functions.round_to_2_decimals(db_available_memory / gb_to_bytes)])
 }
 
 # pga_aggregate_target constraints
