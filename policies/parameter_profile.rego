@@ -1,9 +1,13 @@
 package parameter_profile
 
+import data.functions
+
 gb_to_bytes := 1024*1024*1024
 mb_to_bytes := 1024*1024
+gb_to_mb := 1024
 compute_memory := input.compute_memory
 os_memory_percent := data.constraints_config.os_memory_percent
+
 
 # Use override if set, else fallback to configured percentage
 actual_os_memory := input.os_memory_default_override if {
@@ -37,18 +41,18 @@ deny contains msg if {
 
 deny contains msg if {
 	sga_max_size > db_available_memory * 0.7
-	msg := sprintf("sga_max_size must be <= %v GB (70%% of db_available_memory)", [db_available_memory * 0.7 / gb_to_bytes])
+	msg := sprintf("sga_max_size must be <= %v GB (70%% of db_available_memory)", [round_to_2_decimals(db_available_memory * 0.7 / gb_to_bytes)])
 }
 
 # pga_aggregate_limit constraints
 deny contains msg if {
 	pga_aggregate_limit < max([sga_max_size * 0.4, pga_aggregate_limit_lower_bound])
-	msg := sprintf("pga_aggregate_limit must be >= %v GB (max of 40%% * sga_max_size, 3Mb)", [max([sga_max_size * 0.4 / mb_to_bytes, 3])])
+	msg := sprintf("pga_aggregate_limit must be >= %v MB (max of 40%% * sga_max_size, 3Mb)", [max([round_to_2_decimals(input.sga_max_size * 0.4 * gb_to_mb), 3])])
 }
 
 deny contains msg if {
 	sga_max_size + pga_aggregate_limit > db_available_memory
-	msg := sprintf("sga_max_size + pga_aggregate_limit must be <= %v GB (db_available_memory)", [db_available_memory / gb_to_bytes])
+	msg := sprintf("sga_max_size + pga_aggregate_limit must be <= %v GB (db_available_memory)", [round_to_2_decimals(db_available_memory / gb_to_bytes)])
 }
 
 # pga_aggregate_target constraints
@@ -59,7 +63,7 @@ deny contains msg if {
 
 deny contains msg if {
 	pga_aggregate_target > pga_aggregate_limit / 2
-	msg := sprintf("pga_aggregate_target must be <= %v GB (pga_aggregate_limit / 2)", [pga_aggregate_limit / (2 * gb_to_bytes)])
+	msg := sprintf("pga_aggregate_target must be <= %v GB (pga_aggregate_limit / 2)", [input.pga_aggregate_limit / 2])
 }
 
 # sga_target constraints
@@ -70,7 +74,7 @@ deny contains msg if {
 
 deny contains msg if {
 	sga_target > sga_max_size
-	msg := sprintf("sga_target must be <= %v GB (sga_max_size)", [sga_max_size/gb_to_bytes])
+	msg := sprintf("sga_target must be <= %v GB (sga_max_size)", [input.sga_max_size])
 }
 
 # processes constraints
