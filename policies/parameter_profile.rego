@@ -1,4 +1,4 @@
-package constraints
+package parameter_profile
 
 gb_to_bytes := 1024*1024*1024
 mb_to_bytes := 1024*1024
