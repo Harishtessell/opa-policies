@@ -8,5 +8,6 @@
 		"sga_target":                 100.0,
 		"processes":                  250.0,
 		"sessions":                   400.0,
-		"transactions":               500.0
+		"transactions":               500.0,
+		"service_name": "orac+le_1-9s"
 	}

@@ -29,7 +29,7 @@ pga_aggregate_target := input.pga_aggregate_target * gb_to_bytes
 pga_aggregate_target_lower_bound := 1.5 * gb_to_bytes
 sga_target := input.sga_target * gb_to_bytes
 processes := input.processes
-processes_upper_bound := 3 * mb_to_bytes
+processes_upper_bound := pga_aggregate_limit/ (3 * mb_to_bytes)
 sessions := input.sessions
 transactions := input.transactions
 
@@ -84,8 +84,8 @@ deny contains msg if {
 }
 
 deny contains msg if {
-	processes > pga_aggregate_limit / processes_upper_bound
-	msg := sprintf("processes must be <=%v  (pga_aggregate_limit / 3Mb)", [pga_aggregate_limit / processes_upper_bound])
+	processes > processes_upper_bound
+	msg := sprintf("processes must be <=%v  (pga_aggregate_limit / 3Mb)", [processes_upper_bound])
 }
 
 # sessions constraints
