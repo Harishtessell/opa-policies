@@ -2,7 +2,7 @@ package provision
 
 valid_pattern := "^[a-z0-9_-]*$"
 
-default deny := ""
+default deny := "no"
 
 deny := msg if {
   count(input.service_name) > 63
