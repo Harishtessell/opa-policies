@@ -1,6 +1,8 @@
 module github.com/Harishtessell/opa-policies
 
-go 1.24.2
+go 1.23.8
+
+toolchain go1.23.10
 
 require github.com/open-policy-agent/opa v1.4.2
 
