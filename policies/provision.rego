@@ -18,29 +18,29 @@ validate_service_name := msg if {
 
 default validate_backup_configuration := ""
 validate_backup_configuration := msg if {
-  input.retentionInfo.Weekly > 0
-  input.bc.CustomPolicy.Schedule.WeeklySchedule == null
-  msg := "Weekly Schedule is required"
+  input.retention_info.weekly > 0
+  input.backup_conf.customPolicy.schedule.weeklySchedule == null
+  msg := "Weekly schedule is required"
 } else := msg if {
-  input.retentionInfo.Weekly == 0
-  input.bc.CustomPolicy.Schedule.WeeklySchedule != null
-  msg := "Weekly Schedule is not allowed as RPO Policy does not have Weekly retention"
+  input.retention_info.weekly == 0
+  input.backup_conf.customPolicy.schedule.weeklySchedule != null
+  msg := "Weekly schedule is not allowed as RPO Policy does not have Weekly retention"
 } else := msg if {
-  input.retentionInfo.Monthly > 0
-  input.bc.CustomPolicy.Schedule.MonthlySchedule == null
-  msg := "Monthly Schedule is required"
+  input.retention_info.monthly > 0
+  input.backup_conf.customPolicy.schedule.monthlySchedule == null
+  msg := "Monthly schedule is required"
 } else := msg if {
-  input.retentionInfo.Monthly == 0
-  input.bc.CustomPolicy.Schedule.MonthlySchedule != null
-  msg := "Monthly Schedule is not allowed as RPO Policy does not have Monthly retention"
+  input.retention_info.monthly == 0
+  input.backup_conf.customPolicy.schedule.monthlySchedule != null
+  msg := "Monthly schedule is not allowed as RPO Policy does not have Monthly retention"
 } else := msg if {
-  input.retentionInfo.Yearly > 0
-  input.bc.CustomPolicy.Schedule.YearlySchedule == null
+  input.retention_info.yearly > 0
+  input.backup_conf.customPolicy.schedule.yearlySchedule == null
   msg := "Yearly schedule is required"
 } else := msg if {
-  input.retentionInfo.Yearly == 0
-  input.bc.CustomPolicy.Schedule.YearlySchedule != null
-  msg := "Yearly Schedule is not allowed as RPO Policy does not have Yearly retention"
+  input.retention_info.yearly == 0
+  input.backup_conf.customPolicy.schedule.yearlySchedule != null
+  msg := "Yearly schedule is not allowed as RPO Policy does not have Yearly retention"
 }
 
 # validateOracleSidAndVersion
