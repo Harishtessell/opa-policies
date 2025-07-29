@@ -1,4 +1,4 @@
-package postgres
+package postgres_provision
 
 import rego.v1
 import data.functions
