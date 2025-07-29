@@ -1,4 +1,4 @@
-package provision
+package oracle_provision
 
 import rego.v1
 import data.functions
@@ -10,7 +10,7 @@ validate_service_name := msg if {
   count(input.service_name) > 63
   msg :=  "Service Name is greater then 63 characters." 
 } else := msg if {
-  not regex.match(`^[a-z0-9_-]*$`, input.service_name)
+  not functions.lowercase_alphanumeric_underscore_hyphen(input.service_name)
   msg :=  "Service Name must satisfy all the constraints." 
 }
 
@@ -62,6 +62,6 @@ validate_oracle_sid_and_version := msg if {
   not regex.match(`^[A-Za-z]$`, substring(input.sid, 0, 1))
   msg := "Database name must start with a letter"
 } else := msg if {
-  not functions.valid_name_chars(input.sid)
+  not functions.alphanumeric_or_special_chars(input.sid)
   msg := "Database name can only contain letters, digits, '_', '#', or '$'"
 }

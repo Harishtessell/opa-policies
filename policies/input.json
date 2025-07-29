@@ -1,16 +1,3 @@
 {
-		"compute_memory":             62,
-		"os_memory_default_override":20,
-		"db_total_allotted_memory":   "10",
-		"sga_max_size":               36,
-		"pga_aggregate_limit":        50.0,
-		"pga_aggregate_target":       40.0,
-		"sga_target":                 100.0,
-		"processes":                  250.0,
-		"sessions":                   400.0,
-		"transactions":               500.0,
-		"service_name": "oracle_1-9s",
-		"bc":{"CustomPolicy":null,"EnableAutomatedSnapshot":true},
-		"m":"19.2.3.4",
-		"s":"7#^hj11"
+		"service_name":"a&sdd"
 	}
